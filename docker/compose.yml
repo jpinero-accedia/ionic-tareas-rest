@@ -1,0 +1,30 @@
+services:
+  tareas-app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: dev
+    container_name: tareas-app-dev
+    env_file:
+      - ./.env
+    volumes:
+      - ./app/src:/app/src
+      - node-modules:/app/node_modules
+      - yarn-cache:/app/.yarn
+    ports:
+      - "${PORT}:3000"
+    develop:
+      watch:
+        - action: rebuild
+          path: ./app/src
+          target: ./src
+          initial_sync: true
+        - action: sync
+          path: ./app/src/public
+          target: ./src/public
+
+volumes:
+  node-modules:
+    name: tareas-app-dev-node-modules
+  yarn-cache:
+    name: tareas-app-dev-yarn-cache

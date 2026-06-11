@@ -1,0 +1,62 @@
+# ============================
+# Node / Yarn
+# ============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Yarn Berry internal folders
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/patches
+
+# ============================
+# Environment
+# ============================
+.env
+.env.*
+#.env.*.local
+
+# ============================
+# Build / Cache
+# ============================
+dist/
+build/
+coverage/
+.cache/
+.tmp/
+
+# ============================
+# Logs
+# ============================
+logs/
+*.log
+
+# ============================
+# OS files
+# ============================
+.DS_Store
+Thumbs.db
+
+# ============================
+# Docker / Podman
+# ============================
+docker-data/
+podman-data/
+.docker/
+podman/
+Dockerfile
+compose.yml
+compose.*.yml
+
+# ============================
+# Misc
+# ============================
+*.swp
+*.swo
+*.bak
+*.tmp
