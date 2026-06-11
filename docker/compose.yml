@@ -1,10 +1,10 @@
 services:
-  tareas-app:
+  tareasrest-app:
     build:
       context: .
       dockerfile: ./Dockerfile
       target: dev
-    container_name: tareas-app-dev
+    container_name: tareasrest-app-dev
     env_file:
       - ./.env
     volumes:
@@ -15,16 +15,17 @@ services:
       - "${PORT}:3000"
     develop:
       watch:
-        - action: rebuild
+        - action: sync
           path: ./app/src
           target: ./src
           initial_sync: true
         - action: sync
-          path: ./app/src/public
-          target: ./src/public
+          path: ./app/package.json
+          target: ./package.json
+          initial_sync: true
 
 volumes:
   node-modules:
-    name: tareas-app-dev-node-modules
+    name: tareasrest-app-dev-node-modules
   yarn-cache:
-    name: tareas-app-dev-yarn-cache
+    name: tareasrest-app-dev-yarn-cache

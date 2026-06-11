@@ -3,8 +3,9 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-        "start": "node --watch src/server.js",
-        "serve": "node         src/server.js"
+        "starttest": "node --watch src/test.js",
+        "start":     "node --watch src/server.js",
+        "serve":     "node         src/server.js"
     },
     "dependencies": {
         "express": "^5.2.0",
