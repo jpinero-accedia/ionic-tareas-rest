@@ -15,7 +15,7 @@ services:
       - "${PORT}:3000"
     develop:
       watch:
-        - action: sync
+        - action: rebuild
           path: ./app/src
           target: ./src
           initial_sync: true
