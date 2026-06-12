@@ -25,8 +25,28 @@ class TaskStore {
         this.nextIndex=1;
     }
 
+    #getArrayIndex (id) {
+        return this.data.findIndex( t => t.id === id );
+    }
+
     getAll () {
         return this.data;
+    }
+
+    getTask (id) {
+        const ret={
+            found: false,
+            data: {},
+        };
+        
+        const index = this.#getArrayIndex(id);
+
+        if (index > -1 ) {
+            ret.data=this.data[index];
+            ret.found=true;
+        }
+
+        return ret;
     }
 
     addTask (data) {
@@ -37,26 +57,10 @@ class TaskStore {
         return task;
     }
 
-    getTask (id) {
-        const ret={
-            found: false,
-            data: {},
-        };
-        
-        const index = this.data.findIndex( t => t.id === id );
-
-        if (index > -1 ) {
-            ret.data=this.data[index];
-            ret.found=true;
-        }
-
-        return ret;
-    }
-
     deleteTask (id) {
         let deleted=false;
 
-        const index = this.data.findIndex( t => t.id === id );
+        const index = this.#getArrayIndex(id);
 
         if (index > -1 ) {
             this.data.splice(index,1);
@@ -64,6 +68,27 @@ class TaskStore {
         }
 
         return deleted;
+    }
+
+    modifyTask (id,data,isPartial) {
+        let updated = false;
+        let task;
+
+        const index = this.#getArrayIndex(id);
+
+        if (index > -1) {
+            if (isPartial) {
+                task = this.data[index];
+            }
+            else {
+                task = {};
+            }
+
+            this.data[index] = Task.prototype.createTask({...task, ...data, id});
+            updated = true;
+        }
+
+        return updated;
     }
 }
 

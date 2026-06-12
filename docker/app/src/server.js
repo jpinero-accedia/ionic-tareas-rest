@@ -5,6 +5,7 @@ const app = express();
 
 app.use(express.json());
 
+
 app.get('/tasks', (req,res) => {
     return res.json(TASKS.getAll());
 } );
@@ -70,6 +71,36 @@ app.delete('/tasks/:taskId', (req,res) => {
         if (! TASKS.deleteTask(req.taskobj.taskId) ) {
             req.taskobj.status = 500;
             req.taskobj.errMsg = `Unexpected error trying to delete the task with id='${req.taskobj.id}'.`;
+        }
+    }
+
+    return res.status(req.taskobj.status).json({
+        id: req.taskobj.id,
+        errMsg: req.taskobj.errMsg,
+    });
+});
+
+
+app.put('/tasks/:taskId', (req,res) => {
+    if ( req.taskobj.status == 200 ) {
+        if (! TASKS.modifyTask(req.taskobj.taskId,req.body,false) ) {
+            req.taskobj.status = 500;
+            req.taskobj.errMsg = `Unexpected error trying to replace the task with id='${req.taskobj.id}'.`;
+        }
+    }
+
+    return res.status(req.taskobj.status).json({
+        id: req.taskobj.id,
+        errMsg: req.taskobj.errMsg,
+    });
+});
+
+
+app.patch('/tasks/:taskId', (req,res) => {
+    if ( req.taskobj.status == 200 ) {
+        if (! TASKS.modifyTask(req.taskobj.taskId,req.body,true) ) {
+            req.taskobj.status = 500;
+            req.taskobj.errMsg = `Unexpected error trying to patch the task with id='${req.taskobj.id}'.`;
         }
     }
 
