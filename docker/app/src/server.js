@@ -17,68 +17,66 @@ app.post('/tasks', (req,res) => {
 });
 
 
-app.get('/tasks/:taskId', (req,res) => {
-    let ret;
-    let isOk = true;
-    let status;
-
-    const errobj={
-        id: req.params.taskId,
-        error: ''
+app.param("taskId", (req,res,next,taskId) => {
+    const retobj = {
+        id: taskId,
+        taskId: Number(taskId),
+        task: undefined,
+        status: 200,
+        errMsg: 'OK',
     };
 
-    const id = Number(errobj.id);
-
-    if (isNaN(id)) {
-        errobj.error = `The id '${errobj.id}' is not a valid number.`;
-        isOk = false;
+    if (isNaN(retobj.taskId)) {
+        retobj.errMsg = `The id '${retobj.id}' is not a valid number.`;
+        retobj.status = 404;
     }
     else {
-        ret = TASKS.getTask(id);
-        
-        if (ret.found) {
-            ret = ret.data;
+        const taskobj = TASKS.getTask(retobj.taskId);
+
+        if (taskobj.found) {
+            retobj.task = taskobj.data;
         }
         else {
-            errobj.error = `There is no task with id='${errobj.id}'.`;
-            isOk = false;
+            retobj.errMsg = `Can't obtain the task with id='${retobj.id}'.`;
+            retobj.status = 404;
         }
     }
 
-    if (isOk) {
-        status = 200;
+    req.taskobj = retobj;
+
+    next();
+});
+
+
+app.get('/tasks/:taskId', (req,res) => {
+    let ret;
+
+    if ( req.taskobj.status == 200 ) {
+       ret = res.json(req.taskobj.task); 
     }
     else {
-        status = 404;
-        ret = errobj;
+        ret = res.status(req.taskobj.status).json({
+            id: req.taskobj.id,
+            errMsg: req.taskobj.errMsg,
+        });
     }
 
-    return res.status(status).json(ret);
+    return ret;
 } );
 
 
 app.delete('/tasks/:taskId', (req,res) => {
-    let status = 200;
-
-    const retobj={
-        id: req.params.taskId,
-        errorMsg: 'DELETED OK'
-    };
-
-    const id = Number(retobj.id);
-
-    if (isNaN(id)) {
-        retobj.errorMsg = `The id '${retobj.id}' is not a valid number.`;
-        status = 404;
-    }
-    else {
-        if (! TASKS.deleteTask(id)) {
-            retobj.errorMsg = `Can't delete the task with id='${retobj.id}'.`;
-            status = 404;
+    if ( req.taskobj.status == 200 ) {
+        if (! TASKS.deleteTask(req.taskobj.taskId) ) {
+            req.taskobj.status = 500;
+            req.taskobj.errMsg = `Unexpected error trying to delete the task with id='${req.taskobj.id}'.`;
         }
     }
 
-    return res.status(status).json(retobj);
+    return res.status(req.taskobj.status).json({
+        id: req.taskobj.id,
+        errMsg: req.taskobj.errMsg,
+    });
 });
 
 
@@ -86,3 +84,4 @@ app.listen(3000,'0.0.0.0', () => {
     console.log("REST API started in port 3000 (internal).");
 } );
 
+//
