@@ -34,7 +34,7 @@ class TaskStore {
         task.id=this.nextIndex++;
         this.data.push(task);
 
-        return task.id;
+        return task;
     }
 
     getTask (id) {
